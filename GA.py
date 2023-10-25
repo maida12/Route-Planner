@@ -207,32 +207,33 @@ def fitness_function(individual, destination):
 def genetic_algorithm(population_size, generations, mutation_rate, start, destination, grid):
     population = [create_individual(grid,start, destination,path_length=5) for _ in range(population_size)]
    
-    # for generation in range(generations):
-    #     # Evaluate fitness for each individual in the population
-    for individual in population:
-        individual.fitness = fitness_function(individual, destination)
+    for generation in range(generations):
+        print("====generation====",generation)
+         # Evaluate fitness for each individual in the population
+        for individual in population:
+            individual.fitness = fitness_function(individual, destination)
 
-    # Select parents based on fitness
-    parents = sorted(population, key=lambda x: x.fitness)[:2]
-    for individual in parents:
-        print("pp",individual)
+        # Select parents based on fitness
+        parents = sorted(population, key=lambda x: x.fitness)[:2]
+        for individual in parents:
+            print("pp",individual)
 
-    # Create offspring through crossover and mutation
-    offspring = [crossover(parents[0], parents[1]) for _ in range(population_size - 2)]
-    for individual in offspring:
-        print("ppyp",individual)
-    offspring = [mutate(ind, mutation_rate) for ind in offspring]
-    for individual in offspring:
-        print("ppjyp",individual)
+        # Create offspring through crossover and mutation
+        offspring = [crossover(parents[0], parents[1]) for _ in range(population_size - 2)]
+        for individual in offspring:
+            print("ppyp",individual)
+        offspring = [mutate(ind, mutation_rate) for ind in offspring]
+        for individual in offspring:
+            print("ppjyp",individual)
 
-    # Replace the old population with the new generation
-    population = parents + offspring
-    for individual in population:
-        print("ppp",individual)
+        # Replace the old population with the new generation
+        population = parents + offspring
+        for individual in population:
+            print("ppp",individual)
 
     # Select the best route from the final population
     best_route = min(population, key=lambda x: x.fitness)
-    # print("best_routedd",best_route)
+    print("best_routedd",best_route)
     return best_route
 
 
