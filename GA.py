@@ -132,7 +132,6 @@ def visualize_path_with_animation(grid, path, opened_nodes, blocked_path):
     # Show the plot
     plt.show()
 
-
 class Individual:
     def __init__(self, genes):
         self.genes = genes
@@ -178,8 +177,6 @@ def random_path(start, destination, grid,path):
     index_to_insert = path.index(value_to_insert_before)
     result_array = path[:-1] + path1 + path[-1:]
     return result_array
-
-
 
 def crossover(parent1, parent2):
     # Perform crossover to create a new individual
@@ -236,114 +233,6 @@ def genetic_algorithm(population_size, generations, mutation_rate, start, destin
     print("best_routedd",best_route)
     return best_route
 
-
-
-# # Example usage:
-# rows = 10
-# cols = 10
-# obstacle_density = 0.4
-# start = (2, 3)
-# destination = (8, 9)
-# grid = create_grid(rows, cols,start,destination,obstacle_density)    # Define the grid with obstacles, start, and destination
-# for row in grid:
-#     print(row)
-
-
-# # Run A* to get a reference optimal path
-# astar_path = astar_search(grid, start, destination)
-
-# # Run Genetic Algorithm
-# genetic_path = genetic_algorithm(population_size=10, generations=100, mutation_rate=0.2,
-#                                   start=start, destination=destination, grid=grid)
-
-# print("A* Path:", astar_path)
-# print("Genetic Algorithm Path:", genetic_path)
-
-
-# import random
-# import numpy as np
-
-# class Chromosome:
-#     def __init__(self, path):
-#         self.path = path
-#         self.fitness = None
-
-#     def evaluate_fitness(self, grid, start, destination):
-#         # Calculate the length of the path
-#         path_length = 0
-#         for i in range(len(self.path) - 1):
-#             path_length += grid[self.path[i][0]][self.path[i][1]]
-
-#         # Calculate the number of obstacles avoided
-#         num_obstacles_avoided = 0
-#         for node in self.path:
-#             if grid[node[0]][node[1]] == 1:
-#                 num_obstacles_avoided += 1
-
-#         # Set the fitness of the chromosome
-#         self.fitness = path_length - num_obstacles_avoided
-
-#     def crossover(self, other_chromosome):
-#         # Choose a random crossover point
-#         crossover_point = random.randint(1, len(self.path) - 1)
-
-#         # Create two child chromosomes
-#         child1 = Chromosome(self.path[:crossover_point] + other_chromosome.path[crossover_point:])
-#         child2 = Chromosome(other_chromosome.path[:crossover_point] + self.path[crossover_point:])
-
-#         return child1, child2
-
-#     def mutate(self, mutation_rate):
-#         for i in range(len(self.path)):
-#             if random.random() < mutation_rate:
-#                 # Swap the node at position i with a random node
-#                 random_node = random.randint(0, len(self.path) - 1)
-#                 self.path[i], self.path[random_node] = self.path[random_node], self.path[i]
-
-# def genetic_algorithm(grid, start, destination, population_size, num_generations, mutation_rate):
-#     # Initialize the population
-#     population = []
-#     for i in range(population_size):
-#         startnode=Node(start[0],start[1])
-#         goalnode=Node(destination[0],destination[1])
-#         path = [startnode]
-#         while ((path[-1].x,path[-1].y) != (goalnode.x, goalnode.y)):
-#             # Choose a random neighbor of the current node
-#             neighbor = random.choice(get_neighbors(grid, path[-1]))
-#             path.append(neighbor)
-
-#         chromosome = Chromosome(path)
-#         population.append(chromosome)
-#         print("chromosome",chromosome)
-#         print("  ")
-#         print("population",population)
-
-#     # Evaluate the fitness of each chromosome
-#     for chromosome in population:
-#         chromosome.evaluate_fitness(grid, start, destination)
-
-#     # Repeat until a termination condition is met
-#     for generation in range(num_generations):
-#         # Select parents
-#         parents = []
-#         for i in range(2):
-#             parents.append(random.choices(population, weights=[chromosome.fitness for chromosome in population])[0])
-
-#         # Crossover the parents to create new child chromosomes
-#         child1, child2 = parents[0].crossover(parents[1])
-
-#         # Mutate the child chromosomes
-#         child1.mutate(mutation_rate)
-#         child2.mutate(mutation_rate)
-#         # Replace the worst chromosomes in the population with the new child chromosomes
-#         population.sort(key=lambda chromosome: chromosome.fitness, reverse=True)
-#         population.pop()
-#         population.pop()
-#         population.append(child1)
-#         population.append(child2)
-
-#     # Return the best chromosome
-#     return max(population, key=lambda chromosome: chromosome.fitness)
 
 
 rows = 10
