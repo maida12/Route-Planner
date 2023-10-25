@@ -4,6 +4,7 @@ import heapq
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+grid=[]
 class Node:
     def __init__(self, x, y, cost=0, heuristic=0):
         self.x = x
@@ -15,17 +16,37 @@ class Node:
     def __lt__(self, other): 
         return (self.cost + self.heuristic) < (other.cost + other.heuristic)
 
-def get_neighbors(grid, node):
+# def get_neighbors(grid, node):
+#     neighbors = []
+#     directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+
+#     for dx, dy in directions:
+#         new_x, new_y = node.x + dx, node.y + dy
+
+#         if 0 <= new_x < len(grid) and 0 <= new_y < len(grid[0]) and grid[new_x][new_y] != 1:
+#             neighbors.append(Node(new_x, new_y))
+
+#     return neighbors
+
+
+def get_neighbors(node, destination):
     neighbors = []
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
     for dx, dy in directions:
         new_x, new_y = node.x + dx, node.y + dy
 
-        if 0 <= new_x < len(grid) and 0 <= new_y < len(grid[0]) and grid[new_x][new_y] != 1:
+        if is_valid_location(new_x, new_y, destination):  # Check if the location is valid
             neighbors.append(Node(new_x, new_y))
 
     return neighbors
+
+def is_valid_location(x, y, destination):
+    # Your logic to check if the location is valid
+    # (within the grid boundaries and not equal to the destination)
+    # For example:
+    return 0 <= x < len(grid) and 0 <= y < len(grid[0]) and (x, y) != destination
+
 
 def heuristic(node, destination):
     return abs(node.x - destination[0]) + abs(node.y - destination[1])
@@ -52,7 +73,7 @@ def astar_search(grid, start, destination):
 
         closed_set.add((current_node.x, current_node.y))
 
-        for neighbor in get_neighbors(grid, current_node):
+        for neighbor in get_neighbors( current_node, destination):
             if (neighbor.x, neighbor.y) in closed_set:
                 continue
 
