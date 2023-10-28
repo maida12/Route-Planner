@@ -146,74 +146,69 @@ def create_individual(grid, start, destination, path_length=5):
     for _ in range(path_length - 1):
         current_node = path[-1]
         neighbors = [(path[-1][0] + dx, path[-1][1] + dy) for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]]
-        valid_neighbors = [(x, y) for x, y in neighbors if 0 <= x < rows and 0 <= y < cols and grid[x][y] != 1]
+        valid_neighbors = [(x, y) for x, y in neighbors if 0 <= x < rows and 0 <= y < cols and grid[x][y] != 1 and (x, y) != start]
         
         if valid_neighbors:
             next_step = random.choice(valid_neighbors)
             path.append(next_step)
-            path=random_path(current_node, path[-1], grid,path)
         else:
             # If no valid neighbors, stop generating the path
             break
     path.append(destination)  # Ensure the path reaches the destination
-    path=random_path(path[-2],destination, grid,path)
-    
-    unique_list = []
-    for item in path:
-        if item not in unique_list:
-            unique_list.append(item)
+    return Individual(path)
 
-    
+def fitness_function(chromosome):
+    total_distance = 0
 
-    # print("path",unique_list)
-    return Individual(unique_list)
+    for i in range(len(chromosome.genes) - 1):
+        start_node = chromosome.genes[i]
+        destination_node = chromosome.genes[i + 1]
 
-def random_path(start, destination, grid,path):
-    
-    path1, _, _, _   = astar_search(grid, start, destination)
-    value_to_insert_before = destination
+        # Call A* search between the current pair of nodes
+        _, _, _, cost = astar_search(grid, start_node, destination_node)
 
-    # Find the index of the value
-    index_to_insert = path.index(value_to_insert_before)
-    result_array = path[:-1] + path1 + path[-1:]
-    return result_array
+        # Add the distance to the total
+        total_distance += cost
+
+    print("total_distance",total_distance)
+    fitness=abs(total_distance-bestCost)
+    return fitness
 
 def crossover(parent1, parent2):
     # Perform crossover to create a new individual
     crossover_point = random.randint(1, min(len(parent1.genes), len(parent2.genes)) - 1)
-    genes = parent1.genes[:crossover_point] + parent2.genes[crossover_point:]
-    return Individual(genes)
-
+    # Combine genes from both parents up to the crossover point
+    child_genes = parent1.genes[:crossover_point] + parent2.genes[crossover_point:]
+    
+    Individual(child_genes).fitness=fitness_function(Individual(child_genes))
+    return Individual(child_genes)
+    
 def mutate(individual, mutation_rate):
-    # Perform mutation on an individual
     for i in range(1, len(individual.genes)):
         if random.random() < mutation_rate:
-            value=random.choice(get_neighbors(grid, Node(*individual.genes[i])))
-            individual.genes[i] = value.x, value.y
-    return individual
+            current_node = Node(*individual.genes[i])
+            
+            # Get neighbors that are not already in the genes
+            available_neighbors = [neighbor for neighbor in get_neighbors(grid, current_node) if (neighbor.x, neighbor.y) not in individual.genes]
 
-def fitness_function(individual, destination):
-    # Fitness function - the lower the total cost, the better
-    total_cost = 0
-    for i in range(1, len(individual.genes)):
-        total_cost += heuristic(Node(individual.genes[i-1][0],individual.genes[i-1][1]), destination)
-    
-    individual.fitness = total_cost
-    return total_cost
+            # Choose a random neighbor from the available ones
+            if available_neighbors:
+                new_value = random.choice(available_neighbors)
+                individual.genes[i] = new_value.x, new_value.y
+    individual.fitness=fitness_function(individual)
+    return individual
 
 def genetic_algorithm(population_size, generations, mutation_rate, start, destination, grid):
     population = [create_individual(grid,start, destination,path_length=5) for _ in range(population_size)]
-   
     for generation in range(generations):
         print("====generation====",generation)
          # Evaluate fitness for each individual in the population
         for individual in population:
-            individual.fitness = fitness_function(individual, destination)
-
+            individual.fitness = fitness_function(individual)
+        for individual in population:
+            print("population",individual)
         # Select parents based on fitness
         parents = sorted(population, key=lambda x: x.fitness)[:2]
-        for individual in parents:
-            print("pp",individual)
 
         # Create offspring through crossover and mutation
         offspring = [crossover(parents[0], parents[1]) for _ in range(population_size - 2)]
@@ -230,8 +225,25 @@ def genetic_algorithm(population_size, generations, mutation_rate, start, destin
 
     # Select the best route from the final population
     best_route = min(population, key=lambda x: x.fitness)
-    print("best_routedd",best_route)
     return best_route
+
+def pairwise_astar_search(nodes, grid):
+    distances = []
+
+    for i in range(len(nodes) - 1):
+        start_node = nodes[i]
+        destination_node = nodes[i + 1]
+
+        # Call A* search between the current pair of nodes
+        path, _, _, _ = astar_search(grid, start_node, destination_node)
+
+        # Add the distance to the list of distances
+        for node in path:
+            if node not in distances:
+             distances.append(node)
+
+    return distances
+
 
 
 
@@ -248,9 +260,14 @@ for row in grid:
     print(row)
 
 path, opened_nodes, blocked_path, cost = astar_search(grid, start, destination)
+bestCost=cost
 print("cost",cost)
 
 genetic_path = genetic_algorithm(population_size=5, generations=10, mutation_rate=0.2,
                                   start=start, destination=destination, grid=grid)
 
 print("Genetic Algorithm Path:", genetic_path)
+
+Total_distance=pairwise_astar_search(genetic_path.genes, grid)
+print("dis",Total_distance)
+visualize_path_with_animation(grid, Total_distance, opened_nodes, blocked_path)

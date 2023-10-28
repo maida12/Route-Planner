@@ -134,167 +134,21 @@ def visualize_path_with_animation(grid, path, opened_nodes, blocked_path):
 
 
 # Example usage:
-# rows = 40
-# cols = 40
-# obstacle_density = 0.4
-# start = (2, 3)
-# destination = (38, 39)
-# grid = create_grid(rows, cols,start,destination,obstacle_density)    # Define the grid with obstacles, start, and destination
-# for row in grid:
-#     print(row)
-
-# path, opened_nodes, blocked_path, cost = astar_search(grid, start, destination)
-# print("cost",cost)
-
-# if path:
-#     print("Optimal Path:", path)
-#     visualize_path_with_animation(grid, path, opened_nodes, blocked_path)
-# else:
-#     print("No path found.")
-
-
-
-class Individual:
-    def __init__(self, genes):
-        self.genes = genes
-        self.fitness = 0
-
-
-
-def create_individual(start, destination, grid):
-    # Generate a random route (individual)
-    genes = [start] + random_path(start, destination, grid)
-    return Individual(genes)
-
-def random_path(start, destination, grid):
-    # Generate a random path
-    path = [start]
-    print("start",start )
-    current_node = Node(*start)
-
-    while current_node.x != destination[0] or current_node.y != destination[1]:
-        neighbors = get_neighbors(current_node, destination)
-        if neighbors:
-            next_node = random.choice(neighbors)
-            print("next_node",next_node)
-            path.append((next_node.x, next_node.y))
-            current_node = next_node
-        else:
-            break  # No valid neighbors, end the path
-
-    return path
-
-
-
-    import random
-
-def evaluate_path(path, grid, start, destination):
-    cost = 0
-    for i in range(len(path) - 1):
-        current_node = Node(path[i][0], path[i][1])
-        next_node = Node(path[i + 1][0], path[i + 1][1])
-        cost += 1  # Assuming each step has a cost of 1
-    return cost
-
-# def create_individual(grid, start, destination):
-#     # Generate a random path from start to destination
-#     path, _, _, _ = astar_search(grid, start, destination)
-#     return path
-
-# def create_individual(grid, start, destination, path_length=5):
-#     rows, cols = len(grid), len(grid[0])
-#     path = [start]
-
-#     for _ in range(path_length - 1):
-#         neighbors = [(path[-1][0] + dx, path[-1][1] + dy) for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]]
-#         valid_neighbors = [(x, y) for x, y in neighbors if 0 <= x < rows and 0 <= y < cols and grid[x][y] != 1]
-        
-#         if valid_neighbors:
-#             next_step = random.choice(valid_neighbors)
-#             path.append(next_step)
-#         else:
-#             # If no valid neighbors, stop generating the path
-#             break
-
-#     path.append(destination)  # Ensure the path reaches the destination
-#     print("path",path)
-#     return path
-
-def crossover(parent1, parent2):
-    # Perform crossover (e.g., one-point crossover)
-    crossover_point = random.randint(1, min(len(parent1), len(parent2)) - 1)
-    child = parent1[:crossover_point] + parent2[crossover_point:]
-    return child
-
-def mutate(individual, mutation_rate=0.1):
-    # Perform mutation (e.g., swap two positions)
-    if random.random() < mutation_rate:
-        mutation_point1 = random.randint(0, len(individual) - 1)
-        mutation_point2 = random.randint(0, len(individual) - 1)
-        individual[mutation_point1], individual[mutation_point2] = (
-            individual[mutation_point2],
-            individual[mutation_point1],
-        )
-    return individual
-
-def genetic_algorithm(grid, start, destination, population_size=10, generations=100):
-
-    population = [create_individual(start, destination, grid) for _ in range(population_size)]
-    print("population",population)
-
-    # for generation in range(generations):
-    #     # Evaluate the fitness of each individual
-    #     fitness = [evaluate_path(individual, grid, start, destination) for individual in population]
-
-    #     # Select the top individuals as parents
-    #     parents_indices = np.argsort(fitness)[:2]
-    #     parent1 = population[parents_indices[0]]
-    #     parent2 = population[parents_indices[1]]
-
-    #     # Crossover and mutation to create new individuals
-    #     child = crossover(parent1, parent2)
-    #     child = mutate(child)
-
-    #     # Replace the least fit individual with the child
-    #     least_fit_index = np.argmax(fitness)
-    #     population[least_fit_index] = child
-
-    # # Select the best individual from the final population
-    # best_individual_index = np.argmin(fitness)
-    # best_path = population[best_individual_index]
-
-    # return best_path
-
-
-rows = 10
-cols = 10
-obstacle_density = 0.3
+rows = 40
+cols = 40
+obstacle_density = 0.4
 start = (2, 3)
-destination = (8, 9)
+destination = (38, 39)
 grid = create_grid(rows, cols,start,destination,obstacle_density)    # Define the grid with obstacles, start, and destination
 for row in grid:
     print(row)
+
 path, opened_nodes, blocked_path, cost = astar_search(grid, start, destination)
 print("cost",cost)
 
-
-# best_path =
-genetic_algorithm(grid, start, destination)
-print("Best path found by Genetic Algorithm:", best_path)
-#Manhatten distance
-# def heuristic(position, goal_position):
-#     return np.linalg.norm(np.array(position) - np.array(goal_position))
-
-
-
-# write a function that initializes the the fixed size chromosome with random values not using a star search
-
-
-
-
-
-
-
-
-
+if path:
+    print("Optimal Path:", path)
+    visualize_path_with_animation(grid, path, opened_nodes, blocked_path)
+else:
+    print("No path found.")
 
